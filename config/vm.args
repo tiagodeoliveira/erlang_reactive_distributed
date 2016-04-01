@@ -1,0 +1,6 @@
+-sname erlang_reactive_distributed
+
+-setcookie erlang_reactive_distributed_cookie
+
++K true
++A30

@@ -1,0 +1,16 @@
+{application, erlang_reactive_distributed,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { erlang_reactive_distributed_app, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.
