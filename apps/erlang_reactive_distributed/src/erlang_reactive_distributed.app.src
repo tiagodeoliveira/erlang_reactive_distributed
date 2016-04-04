@@ -1,18 +1,13 @@
-{application, erlang_reactive_distributed,
- [{description, "An OTP application"},
-  {vsn, "0.1.0"},
-  {registered, []},
-  {mod, { erlang_reactive_distributed_app, []}},
-  {applications,
-   [kernel,
-    stdlib,
-    cowboy,
-    lager
+{application, erlang_reactive_distributed, [
+   {description, "OTP HTTP Application!"},
+   {vsn, "0.1.0"},
+   {modules, []},
+   {registered, []},
+   {applications, [
+       kernel,
+       stdlib,
+       cowboy
    ]},
-  {env,[]},
-  {modules, []},
-
-  {maintainers, []},
-  {licenses, []},
-  {links, []}
- ]}.
+   {mod, { erlang_reactive_distributed_app, []}},
+   {env, []}
+]}.

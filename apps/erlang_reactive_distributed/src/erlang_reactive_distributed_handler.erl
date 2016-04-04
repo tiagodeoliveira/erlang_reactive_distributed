@@ -1,44 +1,33 @@
 -module(erlang_reactive_distributed_handler).
 
--export([
-  init/3,
-  allowed_methods/2,
-  content_types_accepted/2,
-  resource_exists/2,
-  terminate/3
-]).
+-behaviour(cowboy_http_handler).
 
--export([
-  handle_post/2,
-  handle_get/1
-]).
+-export([init/3]).
+-export([handle/2]).
+-export([terminate/3]).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% COWBOY CALLBACKS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-init(_Transport, Req, _Opts) ->
-  case cowboy_req:method(Req) of
-    {<<"POST">>, _} ->
-      {upgrade, protocol, cowboy_rest};
+-record(state, {}).
+
+init(_, Req, _Opts) ->
+	{ok, Req, #state{}}.
+
+handle(Req, State=#state{}) ->
+	case cowboy_req:method(Req) of
+		{<<"POST">>, Req1} ->
+      handle_post(Req1, State);
     {<<"GET">>, Req1} ->
-      handle_get(Req1)
-  end.
+      handle_get(Req1, State)
+	end.
 
-allowed_methods(Req, State) -> {[<<"POST">>], Req, State}.
+terminate(_Reason, _Req, _State) ->
+	ok.
 
-content_types_accepted(Req, State) -> {[{<<"application/json">>, handle_post}], Req, State}.
+handle_get(Req, State) ->
+	% lager:info("POST: ", []),
+	{ok, Req2} = cowboy_req:reply(200,[{<<"content-type">>, <<"text/plain">>}], <<"GET">>, Req),
+	{ok, Req2, State}.
 
-resource_exists(Req, State) -> {false, Req, State}.
-
-terminate(_Reason, _Req, _State) -> ok.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% INTERNAL CALLBACKS
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 handle_post(Req, State) ->
-  {ok, _Body, Req1} = cowboy_req:body(Req),
-  {true, Req1, State}.
-
-handle_get(Req) ->
-  {ok, Req1} = cowboy_req:chunked_reply(200, [{"content-type", <<"text/event-stream">>}], Req),
-  {loop, Req1, {}}.
+	% lager:info("GET: ", []),
+	{ok, Req2} = cowboy_req:reply(200,[{<<"content-type">>, <<"text/plain">>}], <<"POST">>, Req),
+	{ok, Req2, State}.
