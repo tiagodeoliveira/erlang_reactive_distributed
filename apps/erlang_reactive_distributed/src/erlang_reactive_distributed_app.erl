@@ -18,7 +18,7 @@ start(_StartType, _StartArgs) ->
 
   Port = case os:getenv("PORT") of
       false -> {ok, ApplicationPort} = application:get_env(http_port), ApplicationPort;
-      Value  -> Value
+      Value  -> {ApplicationPort, _} = string:to_integer(Value), ApplicationPort
   end,
 
   {ok, ListenerCount} = application:get_env(http_listener_count),
