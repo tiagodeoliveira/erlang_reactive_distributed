@@ -23,7 +23,6 @@ terminate(_Reason, _Req, _State) ->
 	ok.
 
 handle_get(Req, State) ->
-	% lager:info("POST: ", []),
 	{ok, Req2} = cowboy_req:reply(200,[{<<"content-type">>, <<"text/plain">>}], <<"GET">>, Req),
 	{ok, Req2, State}.
 

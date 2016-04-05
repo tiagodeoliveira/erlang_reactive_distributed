@@ -16,12 +16,18 @@
 
 start(_StartType, _StartArgs) ->
 
-  {ok, Port} = application:get_env(http_port),
+  Port = case os:getenv("PORT") of
+      false -> {ok, ApplicationPort} = application:get_env(http_port), ApplicationPort;
+      Value  -> Value
+  end,
+
   {ok, ListenerCount} = application:get_env(http_listener_count),
 
   Dispatch = cowboy_router:compile([{'_', [
     {"/", erlang_reactive_distributed_handler, []}
   ]}]),
+
+  lager:info("Starting application on port: ~p", [Port]),
   cowboy:start_http(http, ListenerCount, [{port, Port}],
       [{env, [{dispatch, Dispatch}]}]
   ),

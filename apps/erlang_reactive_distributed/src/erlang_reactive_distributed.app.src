@@ -6,7 +6,8 @@
    {applications, [
        kernel,
        stdlib,
-       cowboy
+       cowboy,
+       lager
    ]},
    {mod, { erlang_reactive_distributed_app, []}},
    {env, []}
