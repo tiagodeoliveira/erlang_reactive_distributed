@@ -20,18 +20,8 @@ start(_StartType, _StartArgs) ->
       false -> {ok, ApplicationPort} = application:get_env(http_port), ApplicationPort;
       Value  -> {ApplicationPort, _} = string:to_integer(Value), ApplicationPort
   end,
-
-  {ok, ListenerCount} = application:get_env(http_listener_count),
-
-  Dispatch = cowboy_router:compile([{'_', [
-    {"/", erlang_reactive_distributed_handler, []}
-  ]}]),
-
-  lager:info("Starting application on port: ~p", [Port]),
-  cowboy:start_http(http, ListenerCount, [{port, Port}],
-      [{env, [{dispatch, Dispatch}]}]
-  ),
-
+  
+  leptus:start_listener(http, [{'_', [{erlang_reactive_distributed_handler, undef}]}], [{port, Port}]),
   erlang_reactive_distributed_sup:start_link().
 
 %%--------------------------------------------------------------------

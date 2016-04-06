@@ -1,33 +1,22 @@
 -module(erlang_reactive_distributed_handler).
 
--behaviour(cowboy_http_handler).
+-compile({parse_transform, leptus_pt}).
 
+%% leptus callbacks
 -export([init/3]).
--export([handle/2]).
--export([terminate/3]).
+-export([get/3]).
+-export([terminate/4]).
 
--record(state, {}).
+init(_Route, _Req, State) ->
+    {ok, State}.
 
-init(_, Req, _Opts) ->
-	{ok, Req, #state{}}.
+get("/", _Req, State) ->
+    {<<"Hello, leptus!">>, State};
+get("/hi/:name", Req, State) ->
+    Status = ok,
+    Name = leptus_req:param(Req, name),
+    Body = [{<<"say">>, <<"Hi">>}, {<<"to">>, Name}],
+    {Status, {json, Body}, State}.
 
-handle(Req, State=#state{}) ->
-	case cowboy_req:method(Req) of
-		{<<"POST">>, Req1} ->
-      handle_post(Req1, State);
-    {<<"GET">>, Req1} ->
-      handle_get(Req1, State)
-	end.
-
-terminate(_Reason, _Req, _State) ->
-	ok.
-
-handle_get(Req, State) ->
-	lager:info("GET: ~p ~n", [Req]),
-	{ok, Req2} = cowboy_req:reply(200,[{<<"content-type">>, <<"text/plain">>}], <<"GET">>, Req),
-	{ok, Req2, State}.
-
-handle_post(Req, State) ->
-	lager:info("POST: ~p ~n", [Req]),
-	{ok, Req2} = cowboy_req:reply(200,[{<<"content-type">>, <<"text/plain">>}], <<"POST">>, Req),
-	{ok, Req2, State}.
+terminate(_Reason, _Route, _Req, _State) ->
+    ok.
