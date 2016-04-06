@@ -20,7 +20,9 @@ start(_StartType, _StartArgs) ->
       false -> {ok, ApplicationPort} = application:get_env(http_port), ApplicationPort;
       Value  -> {ApplicationPort, _} = string:to_integer(Value), ApplicationPort
   end,
-  
+
+  gen_event:start_link({global, event_bus}),
+  gen_event:add_handler({global, event_bus}, erlang_reactive_distributed_event, []),
   leptus:start_listener(http, [{'_', [{erlang_reactive_distributed_handler, undef}]}], [{port, Port}]),
   erlang_reactive_distributed_sup:start_link().
 
