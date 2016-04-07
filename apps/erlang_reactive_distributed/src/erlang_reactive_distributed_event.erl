@@ -4,11 +4,15 @@
 -export([init/1, handle_event/2, handle_call/2, handle_info/2, code_change/3, terminate/2]).
 
 init(_Args) ->
-  {ok, []}.
+  {ok, Connection} = mc_worker_api:connect([{database, <<"test">>}]),
+  {ok, Connection}.
 
-handle_event(Event, State) ->
+handle_event(Event, Connection) ->
   lager:info("New Event [~p] ~n", [Event]),
-  {ok, State}.
+  Collection = events,
+  mc_worker_api:insert(Connection, Collection, Event),
+  lager:info("Amount ~p~n", [mc_worker_api:count(Connection, Collection , {})]),
+  {ok, Connection}.
 
 handle_call(Call, State) ->
   lager:info("Handling call [~p] ~n", [Call]),
