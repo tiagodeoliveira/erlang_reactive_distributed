@@ -4,14 +4,17 @@
 -export([init/1, handle_event/2, handle_call/2, handle_info/2, code_change/3, terminate/2]).
 
 init(_Args) ->
-  {ok, Connection} = mc_worker_api:connect([{database, <<"test">>}]),
-  {ok, Connection}.
+  {ok, RiakAddress} = application:get_env(riak_address),
+  {ok, Pid} = riakc_pb_socket:start_link(RiakAddress, 8087),
+  riakc_pb_socket:ping(Pid),
+  {ok, Pid}.
 
 handle_event(Event, Connection) ->
   lager:info("New Event [~p] ~n", [Event]),
-  Collection = events,
-  mc_worker_api:insert(Connection, Collection, Event),
-  lager:info("Amount ~p~n", [mc_worker_api:count(Connection, Collection , {})]),
+
+  Event = riakc_obj:new(Event),
+  riakc_pb_socket:put(Connection, Event).
+
   {ok, Connection}.
 
 handle_call(Call, State) ->
