@@ -13,7 +13,7 @@ handle_event(Event, Connection) ->
   lager:info("New Event [~p] ~n", [Event]),
 
   Event = riakc_obj:new(Event),
-  riakc_pb_socket:put(Connection, Event).
+  riakc_pb_socket:put(Connection, Event),
 
   {ok, Connection}.
 
