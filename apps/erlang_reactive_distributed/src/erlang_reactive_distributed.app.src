@@ -8,7 +8,7 @@
        stdlib,
        leptus,
        lager,
-       mongodb
+       riakc
    ]},
    {mod, { erlang_reactive_distributed_app, []}},
    {env, []}
